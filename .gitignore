@@ -1,5 +1,9 @@
+# Build stuff
 src/obj/
 src/bin/
 build/
+
+# VSCode specific stuff
 .vscode/
+# Exists only to make C# Dev Kit Plugin work for VSCode
 TrembleSharp.sln
