@@ -12,12 +12,13 @@ using System.Text.RegularExpressions;
 /// Instead, our engine becomes a child of a small wrapper parent process so that we can
 /// redirect the child process stdout and capture all data being written to it, from both
 /// the managed and unmanaged code
-public partial class LogProcessWrapper()
+internal partial class LogProcessWrapper()
 {
-   Process wrappedProcess = new Process();
+   Process wrappedProcess = new();
 
-   // TODO: Replace with some kind of file rotation
-   StreamWriter logFile;
+   // Constructor is guarunteed to succeed with logFile non-null, sowe use null-forgiving
+   // operator to suppress warning
+   StreamWriter logFile = null!;
 
    public LogProcessWrapper(CommandLineOptions options, string[] args)
       : this()
@@ -34,9 +35,40 @@ public partial class LogProcessWrapper()
       wrappedProcess.StartInfo = startInfo;
       wrappedProcess.EnableRaisingEvents = true;
 
-      logFile = new StreamWriter("log.txt");
+      // Set up new timestamped log file, as well as erase old logs
+      Directory.CreateDirectory("logs/");
+      DeleteOldLogs();
+      var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss");
+      logFile = new StreamWriter($"logs/log_{timestamp}.txt");
       logFile.AutoFlush = true;
+
       wrappedProcess.OutputDataReceived += RedirectStdOut;
+   }
+
+   /// <summary>
+   /// Starts the engine as a child process, blocking execution of the parent until
+   /// the child process exits
+   /// </summary>
+   public void StartChild()
+   {
+      wrappedProcess.Start();
+      wrappedProcess.BeginOutputReadLine();
+      wrappedProcess.WaitForExit();
+   }
+
+   private void DeleteOldLogs()
+   {
+      var files = Directory.GetFiles("logs/");
+
+      var filesToDelete = files
+         .Where(file => OldLogsRegex().IsMatch(file))
+         .Select(file => new FileInfo(file))
+         .Where(info => info.CreationTime < DateTime.Now.AddDays(-7));
+
+      foreach (FileInfo info in filesToDelete)
+      {
+         info.Delete();
+      }
    }
 
    /// <summary>
@@ -56,17 +88,9 @@ public partial class LogProcessWrapper()
       Console.WriteLine(e.Data);
    }
 
-   /// <summary>
-   /// Starts the engine as a child process, blocking execution of the parent until
-   /// the child process exits
-   /// </summary>
-   public void StartChild()
-   {
-      wrappedProcess.Start();
-      wrappedProcess.BeginOutputReadLine();
-      wrappedProcess.WaitForExit();
-   }
-
    [GeneratedRegex("\x1b(.*?)m")]
    private static partial Regex StripAnsiRegex();
+
+   [GeneratedRegex("log_[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}.[0-9]{2}.[0-9]{2}.txt")]
+   private static partial Regex OldLogsRegex();
 }

@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-public class CommandLineOptions
+internal class CommandLineOptions
 {
    [Option(
       "no-log-wrapper",
