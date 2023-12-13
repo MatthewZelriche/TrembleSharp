@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using TR;
 
 internal class CommandLineOptions
 {
@@ -22,8 +23,7 @@ internal partial class Program
             if (o.NoLogWrapper)
             {
                // TODO: Main program execution goes here
-               Console.ForegroundColor = ConsoleColor.Yellow;
-               Console.WriteLine("Hello world!");
+               Log.Info("Tremble C# Runtime Initializing");
                TrembleInterop.Test();
             }
             else
