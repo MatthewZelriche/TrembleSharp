@@ -1,2 +1,5 @@
 src/obj/
 src/bin/
+build/
+.vscode/
+TrembleSharp.sln
