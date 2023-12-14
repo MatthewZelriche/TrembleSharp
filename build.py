@@ -16,6 +16,6 @@ parser.add_argument('--jobs', dest='jobs',
 
 args = parser.parse_args()
 
-subprocess.run(["cmake", "-Svendor/Tremble/", "-Bbuild/"])
+subprocess.run(["cmake", "-Svendor/Tremble/", "-Bbuild/", "-DCMAKE_BUILD_TYPE=" + args.buildConfig])
 subprocess.run(["cmake", "--build", "build", "--config", args.buildConfig, "-j" + args.jobs])
 subprocess.run(["dotnet", "build", "src/src.csproj", "--output", "build/" + args.buildConfig])
