@@ -22,9 +22,9 @@ internal partial class Program
          {
             if (o.NoLogWrapper)
             {
-               // TODO: Main program execution goes here
                Log.Info("Tremble C# Runtime Initializing");
-               TrembleInterop.Test();
+               var engine = new Engine();
+               engine.Start();
             }
             else
             {
