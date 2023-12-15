@@ -19,3 +19,5 @@ args = parser.parse_args()
 subprocess.run(["cmake", "-Svendor/Tremble/", "-Bbuild/", "-DCMAKE_BUILD_TYPE=" + args.buildConfig])
 subprocess.run(["cmake", "--build", "build", "--config", args.buildConfig, "-j" + args.jobs])
 subprocess.run(["dotnet", "build", "src/src.csproj", "--output", "build/" + args.buildConfig])
+
+shutil.copytree("vendor/Tremble/resources", "build/" + args.buildConfig + "/", dirs_exist_ok=True)
