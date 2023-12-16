@@ -5,12 +5,17 @@ namespace TR;
 public class Engine
 {
    IntPtr handle;
-   Stopwatch deltaTimeCounter = new Stopwatch();
+   Stopwatch deltaTimeCounter = new();
    double delta = 1 / 60.0f;
 
    public Engine()
    {
-      handle = TrembleInterop.engine_create();
+      TrembleError errorCode;
+      if ((errorCode = TrembleInterop.engine_create(out handle)) != TrembleError.NO_ERROR)
+      {
+         Log.Error($"Failed to init TrembleCPP with error: {errorCode}. Shutting down.");
+         Environment.Exit((int)errorCode);
+      }
    }
 
    public void Start()
