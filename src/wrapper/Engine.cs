@@ -18,6 +18,11 @@ public class Engine
       }
    }
 
+   ~Engine()
+   {
+      TrembleInterop.engine_destroy(handle);
+   }
+
    public void Start()
    {
       // TODO: Hook up to DLL exit request
