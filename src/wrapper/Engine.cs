@@ -20,14 +20,14 @@ public class Engine
 
    ~Engine()
    {
+      // TODO: Destructors apparently don't work the way they do in c++
       TrembleInterop.engine_destroy(handle);
    }
 
    public void Start()
    {
-      // TODO: Hook up to DLL exit request
       // TODO: Eventually we will be running all of our user c# scripts here
-      while (true)
+      while (!TrembleInterop.engine_requested_shutdown(handle))
       {
          deltaTimeCounter.Start();
 

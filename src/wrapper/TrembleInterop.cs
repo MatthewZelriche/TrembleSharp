@@ -17,5 +17,9 @@ partial class TrembleInterop
    public static partial void engine_destroy(IntPtr handle);
 
    [LibraryImport("Tremble")]
+   [return: MarshalAs(UnmanagedType.Bool)]
+   public static partial Boolean engine_requested_shutdown(IntPtr handle);
+
+   [LibraryImport("Tremble")]
    public static partial void engine_update(IntPtr handle, double delta);
 }
